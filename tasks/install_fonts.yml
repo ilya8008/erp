@@ -1,0 +1,22 @@
+---
+- name: Copy font files
+  copy:
+    src: fonts/msttcorefonts-2.5-1.noarch.rpm
+    dest: /tmp/
+
+- name: Install rpm
+  yum:
+    name: /tmp/msttcorefonts-2.5-1.noarch.rpm
+    state: present
+
+- name: Install fonts
+  shell: |
+    mkfontscale
+    mkfontdir
+  args:
+    chdir: /usr/share/fonts/msttcorefonts
+
+- name: Delete rpm
+  file:
+    path: /tmp/msttcorefonts-2.5-1.noarch.rpm
+    state: absent

@@ -1,0 +1,5 @@
+---
+- name: Install libs
+  yum:
+    name: ['ImageMagick', 'freetype', 'libgsf', 'glib2', 'unixODBC', 'curl', 'cabextract', 'xorg-x11-font-utils', 'fontconfig']
+    state: present

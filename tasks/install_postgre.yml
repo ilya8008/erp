@@ -1,0 +1,56 @@
+---
+- name: Copy postgresql files
+  copy:
+    src: "{{ item }}"
+    dest: /tmp/
+  with_fileglob:
+    - postgresql/*
+
+- name: Find rpm files in /tmp folder
+  find:
+     paths: "/tmp"
+     pattern: "postgre*.rpm"
+  register: rpm_files
+
+- set_fact:
+   rpm_list: "{{ rpm_files.files | map(attribute='path') | list}}"
+
+- name: Install rpms
+  yum:
+    name: "{{ rpm_list }}"
+    state: present
+
+- name: Init db
+  script: scripts/pg_init.sh
+
+- name: Delete rpms
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ rpm_list }}"
+
+- name: Enable and start service
+  service:
+    name: postgresql-9.6.service
+    enabled: yes
+    state: started
+
+- name: Change postgres password
+  postgresql_user:
+    name: postgres
+    password: "{{ postgres_password }}"
+
+- name: Stop postgres service
+  service:
+    name: postgresql-9.6.service
+    state: stopped
+
+- name: Move db directory 
+  script: scripts/pg_move.sh
+
+- name: Link db directory
+  file:
+    path: /var/lib/pgsql
+    src: /mnt/data/pgsql
+    state: link

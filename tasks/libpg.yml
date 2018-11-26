@@ -1,0 +1,5 @@
+---
+- name: Install libs for postgreSQL
+  yum:
+    name: ['readline', 'krb5-libs', 'openssl', 'libicu-devel', 'python-psycopg2']
+    state: present

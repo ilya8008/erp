@@ -1,0 +1,33 @@
+---
+- name: Copy 1c files
+  copy:
+    src: "{{ item }}"
+    dest: /tmp/
+  with_fileglob:
+    - 1c/*
+
+- name: Find rpm files in /tmp folder
+  find:
+     paths: "/tmp"
+     pattern: "1C*.rpm"
+  register: rpm_files
+
+- set_fact:
+    rpm_list: "{{ rpm_files.files | map(attribute='path') | list}}"
+
+- name: Install rpms
+  yum:
+    name: "{{ rpm_list }}"
+    state: present
+
+- name: Delete rpms
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ rpm_list }}"
+
+- name: Enable service
+  service:
+    name: srv1cv83
+    enabled: yes

@@ -1,0 +1,10 @@
+---
+# tasks file for erp
+- include: modify_hosts.yml
+- include: lib.yml
+- include: libpg.yml
+- include: install_fonts.yml
+- include: install_postgre.yml
+- include: install_hasp.yml
+- include: install_1c.yml
+- include: reboot.yml
